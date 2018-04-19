@@ -34,6 +34,9 @@ module.exports = function(opts = {}) {
       if (alphaValueFloat === 0 || alphaValueFloat === 1) return null
 
       Object.entries(modules).forEach(([configKey, variants]) => {
+        if (variants === true) {
+          variants = config(`modules.${configKey}`, [])
+        }
         if (variants === false) return
 
         let colors = config(configKey, {})
@@ -60,7 +63,7 @@ module.exports = function(opts = {}) {
               return null
             })
             .filter(Boolean),
-          variants === true ? config(`modules.${configKey}`, []) : variants
+          variants
         )
       })
     })
