@@ -2,6 +2,52 @@
 
 > Automatic alpha variants for your Tailwind CSS colors
 
+## Why?
+
+If you’re like me your Tailwind CSS color configuration often ends up looking something like this:
+
+```js
+module.exports = {
+  // ...
+  backgroundColors: {
+    red: '#f00',
+    'red-10': 'rgba(255, 0, 0, 0.1)',
+    'red-20': 'rgba(255, 0, 0, 0.2)',
+    'red-50': 'rgba(255, 0, 0, 0.5)',
+    'red-80': 'rgba(255, 0, 0, 0.8)'
+    // ...
+  }
+  // ...
+}
+```
+
+`tailwindcss-alpha` automatically generates alpha variations for each of your background, text, and border colors.
+
+## Install
+
+```
+npm install --save-dev tailwindcss-alpha
+```
+
+```js
+// tailwind.js
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-alpha')({
+      modules: {
+        backgroundColors: true
+      },
+      alpha: {
+        '10': 0.1,
+        '30': 0.3
+      }
+    })
+  ]
+  // ...
+}
+```
+
 ## Options
 
 ### `modules` (optional)
