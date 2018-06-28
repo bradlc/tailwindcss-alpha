@@ -49,7 +49,7 @@ module.exports = function(opts = {}) {
                 if (parsed.valpha === 1) {
                   return PREFIXES[configKey].map((prefix, i) => {
                     return {
-                      [`.${prefix}-${e(colorKey)}-${e(alphaKey)}`]: {
+                      [`.${e(`${prefix}-${colorKey}-${alphaKey}`)}`]: {
                         [`${PROPERTIES[configKey][i]}`]: parsed
                           .alpha(alphaValueFloat)
                           .string()
