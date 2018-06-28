@@ -1,11 +1,16 @@
 {
   "name": "tailwindcss-alpha",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Automatic alpha variants for your Tailwind CSS colors",
   "main": "index.js",
-  "files": ["index.js"],
+  "files": [
+    "index.js"
+  ],
   "scripts": {},
-  "keywords": ["tailwindcss", "tailwind"],
+  "keywords": [
+    "tailwindcss",
+    "tailwind"
+  ],
   "author": "Brad Cornes <bradlc41@gmail.com>",
   "repository": {
     "type": "git",
