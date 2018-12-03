@@ -3,7 +3,8 @@ const Color = require('color')
 const PREFIXES = {
   backgroundColors: ['bg'],
   textColors: ['text'],
-  borderColors: ['border', 'border-t', 'border-r', 'border-b', 'border-l']
+  borderColors: ['border', 'border-t', 'border-r', 'border-b', 'border-l'],
+  svgFill: ['fill']
 }
 
 const PROPERTIES = {
@@ -15,7 +16,8 @@ const PROPERTIES = {
     'borderRightColor',
     'borderBottomColor',
     'borderLeftColor'
-  ]
+  ],
+  svgFill: ['fill']
 }
 
 module.exports = function(opts = {}) {
@@ -25,7 +27,8 @@ module.exports = function(opts = {}) {
       modules = {
         backgroundColors: true,
         textColors: false,
-        borderColors: false
+        borderColors: false,
+        svgFill: false
       }
     } = opts
 
