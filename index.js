@@ -4,7 +4,8 @@ const PREFIXES = {
   backgroundColors: ['bg'],
   textColors: ['text'],
   borderColors: ['border', 'border-t', 'border-r', 'border-b', 'border-l'],
-  svgFill: ['fill']
+  svgFill: ['fill'],
+  svgStroke: ['stroke']
 }
 
 const PROPERTIES = {
@@ -17,7 +18,8 @@ const PROPERTIES = {
     'borderBottomColor',
     'borderLeftColor'
   ],
-  svgFill: ['fill']
+  svgFill: ['fill'],
+  svgStroke: ['stroke']
 }
 
 module.exports = function(opts = {}) {
@@ -28,7 +30,8 @@ module.exports = function(opts = {}) {
         backgroundColors: true,
         textColors: false,
         borderColors: false,
-        svgFill: false
+        svgFill: false,
+        svgStroke: false
       }
     } = opts
 
