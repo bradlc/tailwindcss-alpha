@@ -1,6 +1,6 @@
 {
   "name": "tailwindcss-alpha",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Automatic alpha variants for your Tailwind CSS colors",
   "main": "index.js",
   "files": [
