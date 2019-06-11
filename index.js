@@ -1,51 +1,48 @@
 const Color = require('color')
 
-const PREFIXES = {
-  backgroundColors: ['bg'],
-  textColors: ['text'],
-  borderColors: ['border', 'border-t', 'border-r', 'border-b', 'border-l'],
-  svgFill: ['fill'],
-  svgStroke: ['stroke']
-}
-
-const PROPERTIES = {
-  backgroundColors: ['backgroundColor'],
-  textColors: ['color'],
-  borderColors: [
-    'borderColor',
-    'borderTopColor',
-    'borderRightColor',
-    'borderBottomColor',
-    'borderLeftColor'
-  ],
-  svgFill: ['fill'],
-  svgStroke: ['stroke']
+const modules = {
+  backgroundColor: {
+    properties: ['backgroundColor'],
+    prefix: ['bg']
+  },
+  textColor: {
+    properties: ['color'],
+    prefix: ['text']
+  },
+  borderColor: {
+    properties: [
+      'borderColor',
+      'borderTopColor',
+      'borderRightColor',
+      'borderBottomColor',
+      'borderLeftColor'
+    ],
+    prefix: ['border', 'border-t', 'border-r', 'border-b', 'border-l']
+  },
+  fill: {
+    properties: ['fill'],
+    prefix: ['fill']
+  },
+  stroke: {
+    properties: ['stroke'],
+    prefix: ['stroke']
+  }
 }
 
 module.exports = function(opts = {}) {
-  return function({ e, addUtilities, config }) {
-    let {
-      alpha = config('alpha', config('opacity', {})),
-      modules = {
-        backgroundColors: true,
-        textColors: false,
-        borderColors: false,
-        svgFill: false,
-        svgStroke: false
-      }
-    } = opts
+  return function({ e, addUtilities, theme, variants }) {
+    let alpha = theme('alpha', theme('opacity', {}))
 
     Object.entries(alpha).forEach(([alphaKey, alphaValue]) => {
       let alphaValueFloat = parseFloat(alphaValue)
       if (alphaValueFloat === 0 || alphaValueFloat === 1) return null
 
-      Object.entries(modules).forEach(([configKey, variants]) => {
-        if (variants === true) {
-          variants = config(`modules.${configKey}`, [])
-        }
-        if (variants === false) return
+      Object.entries(modules).forEach(([mod, { properties, prefix }]) => {
+        let key = `${mod}Alpha`
+        let modVariants = variants(key, variants(mod, []))
+        if (!modVariants.length) return
 
-        let colors = config(configKey, {})
+        let colors = flattenColors(theme(key, {}))
 
         addUtilities(
           Object.entries(colors)
@@ -53,25 +50,37 @@ module.exports = function(opts = {}) {
               try {
                 let parsed = Color(color)
                 if (parsed.valpha === 1) {
-                  return PREFIXES[configKey].map((prefix, i) => {
+                  return prefix.map((prefix, i) => {
                     return {
                       [`.${e(`${prefix}-${colorKey}-${alphaKey}`)}`]: {
-                        [`${PROPERTIES[configKey][i]}`]: parsed
+                        [`${properties[i]}`]: parsed
                           .alpha(alphaValueFloat)
                           .string()
                       }
                     }
                   })
                 }
-              } catch (err) {
-                return null
-              }
-              return null
+              } catch (_) {}
             })
             .filter(Boolean),
-          variants
+          modVariants
         )
       })
     })
   }
+}
+
+function flattenColors(colors) {
+  let result = {}
+  for (let color in colors) {
+    if (colors[color] === Object(colors[color])) {
+      for (let key in colors[color]) {
+        let suffix = key === 'default' ? '' : `-${key}`
+        result[`${color}${suffix}`] = colors[color][key]
+      }
+    } else {
+      result[color] = colors[color]
+    }
+  }
+  return result
 }
