@@ -67,20 +67,19 @@ test('uses `opacity` as fallback', () => {
 })
 
 test('allows users to configure plugin', () => {
-  const pluginOptions = {
-    modules: {
-      backgroundColors: true,
-      textColors: true,
-      borderColors: false,
-      svgFill: false,
-      svgStroke: false,
-    },
-  }
   const testConfig = {
     textColors: { 'blue': '#00f' },
     backgroundColors: { 'red': '#f00' },
     alpha: { '25': 0.25, '50': 0.5, '75': 0.75 },
-    plugins: [plugin(pluginOptions)],
+    plugins: [plugin({
+      modules: {
+        backgroundColors: true,
+        textColors: true,
+        borderColors: false,
+        svgFill: false,
+        svgStroke: false,
+      },
+    })],
   }
   const expectedCss = `
     .bg-red-25 { background-color: rgba(255, 0, 0, 0.25) }
@@ -91,6 +90,6 @@ test('allows users to configure plugin', () => {
     .text-blue-75 { color: rgba(0, 0, 255, 0.75) }
   `
 
-  return generatePluginCss(tailwindConfig, testConfig, pluginOptions)
+  return generatePluginCss(tailwindConfig, testConfig)
     .then(css => expect(css).toMatchCss(expectedCss))
 })
