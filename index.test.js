@@ -181,6 +181,21 @@ test('users can define a new module recipe', () => {
   return generatePluginCss(tailwindConfig, testConfig)
     .then(css => expect(css).toMatchCss(expectedCss))
 })
+test.skip('works for Tailwind 0.x', () => {
+  const testConfig = {
+    textColors: { 'blue': '#00f' },
+    backgroundColors: { 'red': '#f00' },
+    alpha: { '25': 0.25, '50': 0.5, '75': 0.75 },
+  }
+  const expectedCss = `
+    .bg-red-25 { background-color: rgba(255, 0, 0, 0.25) }
+    .bg-red-50 { background-color: rgba(255, 0, 0, 0.5) }
+    .bg-red-75 { background-color: rgba(255, 0, 0, 0.75) }
+  `
+
+  // TODO: Use TailwindCSS v0.x instead of v1.x
+  return generatePluginCss(tailwindConfig, testConfig)
+    .then(css => expect(css).toMatchCss(expectedCss))
+})
 
 test.todo('utilities are sorted correctly')
-test.todo('works for Tailwind 0.x')

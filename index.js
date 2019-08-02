@@ -1,6 +1,6 @@
 const Color = require('color')
 const flatten = require('flat')
-const { FLATTEN_CONFIG } = require('@hacknug/tailwindcss-plugin-utils')
+const { FLATTEN_CONFIG, getSettings } = require('@hacknug/tailwindcss-plugin-utils')
 
 module.exports = function(pluginOptions = {}) {
   return function({
@@ -10,37 +10,37 @@ module.exports = function(pluginOptions = {}) {
     const {
       modules: userModules = {},
       // TODO: Make sure its backwards compatible with 0.x
-      alpha = theme('alpha', theme('opacity', {})),
+      alpha = getSettings(theme || config, 'alpha', ['opacity']),
     } = pluginOptions
     const modules = {
       backgroundColor: {
-        names: ['backgroundColor', 'backgroundColors'],
         prefixes: ['bg'],
         properties: ['backgroundColor'],
+        fallbacks: ['backgroundColors'],
         process: true,
       },
       textColor: {
-        names: ['textColor', 'textColors'],
         prefixes: ['text'],
         properties: ['color'],
+        fallbacks: ['textColors'],
         process: false,
       },
       borderColor: {
-        names: ['borderColor', 'borderColors'],
         prefixes: ['border', 'border-t', 'border-r', 'border-b', 'border-l'],
         properties: ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor'],
+        fallbacks: ['borderColors'],
         process: false,
       },
       fill: {
-        names: ['fill', 'svgFill'],
         prefixes: ['fill'],
         properties: ['fill'],
+        fallbacks: ['svgFill'],
         process: false,
       },
       stroke: {
-        names: ['stroke', 'svgStroke'],
         prefixes: ['stroke'],
         properties: ['stroke'],
+        fallbacks: ['svgStroke'],
         process: false,
       },
     }
@@ -76,7 +76,7 @@ module.exports = function(pluginOptions = {}) {
           return null
         }
 
-        const colors = theme(configKey, {})
+        const colors = getSettings(theme || config, configKey, moduleConfig.fallbacks)
         const colorAlphas = Object
           .entries(flatten(colors, FLATTEN_CONFIG))
           .map(processColor).filter(Boolean)
