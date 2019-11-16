@@ -72,7 +72,7 @@ module.exports = function(opts = {}) {
                 }
                 return null
               }, {})
-            addUtilities(utilities.filter(Boolean), variants)
+            addUtilities(utilities, variants)
       })
     })
   }
