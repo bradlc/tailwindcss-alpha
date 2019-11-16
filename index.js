@@ -1,7 +1,7 @@
 const Color = require('color')
-
+const defaultColors = require('tailwindcss/defaultTheme').colors
 const PREFIXES = {
-  backgroundColors: ['bg'],
+  backgroundColor: ['bg'],
   textColors: ['text'],
   borderColors: ['border', 'border-t', 'border-r', 'border-b', 'border-l'],
   svgFill: ['fill'],
@@ -9,7 +9,7 @@ const PREFIXES = {
 }
 
 const PROPERTIES = {
-  backgroundColors: ['backgroundColor'],
+  backgroundColor: ['backgroundColor'],
   textColors: ['color'],
   borderColors: [
     'borderColor',
@@ -23,11 +23,11 @@ const PROPERTIES = {
 }
 
 module.exports = function(opts = {}) {
-  return function({ e, addUtilities, config }) {
+  return function({ e, addUtilities, config, theme }) {
     let {
       alpha = config('alpha', config('opacity', {})),
       modules = {
-        backgroundColors: true,
+        backgroundColor: true,
         textColors: false,
         borderColors: false,
         svgFill: false,
@@ -35,42 +35,44 @@ module.exports = function(opts = {}) {
       }
     } = opts
 
+  
     Object.entries(alpha).forEach(([alphaKey, alphaValue]) => {
       let alphaValueFloat = parseFloat(alphaValue)
       if (alphaValueFloat === 0 || alphaValueFloat === 1) return null
 
       Object.entries(modules).forEach(([configKey, variants]) => {
         if (variants === true) {
-          variants = config(`modules.${configKey}`, [])
+          variants = theme(configKey, [])
         }
         if (variants === false) return
 
-        let colors = config(configKey, {})
+        const colors = Object.keys( defaultColors ).reduce((newColors, colorKey) => 
+          (typeof defaultColors[ colorKey ] === 'object') ? 
+          {...newColors, ...(Object.entries(defaultColors[ colorKey ]).reduce((tmp, [strength, color]) => { return {...tmp, [colorKey + '-' + strength] : color}; }, {}))} : 
+          {...newColors, ...{[colorKey] : defaultColors[ colorKey ]}}, {})
 
-        addUtilities(
-          Object.entries(colors)
-            .map(([colorKey, color]) => {
-              try {
-                let parsed = Color(color)
-                if (parsed.valpha === 1) {
-                  return PREFIXES[configKey].map((prefix, i) => {
-                    return {
-                      [`.${e(`${prefix}-${colorKey}-${alphaKey}`)}`]: {
-                        [`${PROPERTIES[configKey][i]}`]: parsed
-                          .alpha(alphaValueFloat)
-                          .string()
+            let utilities = Object.entries(colors)
+              .reduce((utilities, [colorKey, color]) => {
+                try {
+                  let parsed = Color(color)
+                  if (parsed.valpha === 1) {
+                    let eachColor = PREFIXES[configKey].reduce((acc, prefix, i) => {
+                      return {...acc,
+                        [`.${e(`${prefix}-${colorKey}-${alphaKey}`)}`]: {
+                          [`${PROPERTIES[configKey][i]}`]: parsed
+                            .alpha(alphaValueFloat)
+                            .string()
+                        }
                       }
-                    }
-                  })
+                    }, {})
+                    return {...utilities, ...eachColor}
+                  }
+                } catch (err) {
+                  return null
                 }
-              } catch (err) {
                 return null
-              }
-              return null
-            })
-            .filter(Boolean),
-          variants
-        )
+              }, {})
+            addUtilities(utilities.filter(Boolean), variants)
       })
     })
   }
