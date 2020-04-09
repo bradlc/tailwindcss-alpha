@@ -9,7 +9,7 @@ If you’re like me your Tailwind CSS color configuration often ends up looking 
 ```js
 module.exports = {
   // ...
-  backgroundColors: {
+  backgroundColor: {
     red: '#f00',
     'red-10': 'rgba(255, 0, 0, 0.1)',
     'red-20': 'rgba(255, 0, 0, 0.2)',
